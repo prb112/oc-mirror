@@ -32,7 +32,7 @@ ifeq ($(DISABLE_CGO), 1)
 	override BTRFS_BUILD_TAG = exclude_graphdriver_devicemapper exclude_graphdriver_btrfs containers_image_openpgp
 endif
 
-GO_BUILD_FLAGS = -tags "json1 $(BTRFS_BUILD_TAG) $(LIBDM_BUILD_TAG) $(LIBSUBID_BUILD_TAG)"
+GO_BUILD_FLAGS = ""
 GO_BUILD_BINDIR :=./bin
 
 all: tidy test-unit build
@@ -42,7 +42,11 @@ cross-build-linux-amd64:
 	+@GOOS=linux GOARCH=amd64 $(MAKE) "$(GO_BUILD_FLAGS)" --no-print-directory build GO_BUILD_BINDIR=$(GO_BUILD_BINDIR)/linux-amd64
 .PHONY: cross-build-linux-amd64
 
-cross-build: cross-build-linux-amd64
+cross-build-linux-ppc64le:
+	+@GOOS=linux GOARCH=ppc64le $(MAKE) "$(GO_BUILD_FLAGS)" --no-print-directory build GO_BUILD_BINDIR=$(GO_BUILD_BINDIR)/linux-ppc64le
+.PHONY: cross-build-linux-ppc64le
+
+cross-build: cross-build-linux-amd64 cross-build-linux-ppc64le
 .PHONY: cross-build
 
 hack-build: clean
