@@ -16,13 +16,14 @@ ARG DNF_LIST="\
   libassuan-devel \
 "
 
+ARG ARCH=amd64
+
 #################################################################################
 # Build UBI8 Builder
 RUN set -ex \
      && dnf install -y --nodocs --setopt=install_weak_deps=false ${DNF_LIST}    \
      && dnf clean all -y                                                        \
      && GO_VERSION=go1.19.5                                       \
-     && ARCH=ppc64le                                       \
      && curl -sL https://golang.org/dl/${GO_VERSION}.linux-${ARCH}.tar.gz         \
         | tar xzvf - --directory /usr/local/                                    \
      && /usr/local/go/bin/go version                                            \
