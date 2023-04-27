@@ -84,10 +84,21 @@ function check_sequence_number() {
 # check_image_removed will check if an image has been pruned from the registry
 function check_image_removed() {
    local removed_image="${1:?removed image required}"
-   set -e
+
+   # There is an asynchronous delete process.
+   # The while-loop accounts asynchronous delays
+   set +e
    output=$(crane digest --insecure $removed_image 2>&1) && returncode=$? || returncode=$?
+   count=1
+   while [ ! -z "${output}" ] && [[ $count -lt 4 ]]
+   do
+      sleep 30
+      output=$(crane digest --insecure $removed_image 2>&1) && returncode=$? || returncode=$?
+      count=$((count+1))
+   done
+
    if [[ $returncode != 1 ]]; then
       echo "image $removed_image still exists in registry"
-      return 1
-    fi
+      exit 1
+   fi
 }
