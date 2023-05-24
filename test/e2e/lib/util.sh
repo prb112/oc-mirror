@@ -55,10 +55,12 @@ function install_deps() {
     tar xvf opm.tar bin/opm
     mv bin/opm $GOBIN
     rm -f registry2.tar opm.tar
-      wget -O $GOBIN/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-      chmod +x $GOBIN/jq
+    wget -O $GOBIN/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
+    chmod +x $GOBIN/jq
   else
+    # non x86_64 flow
     pushd ${DATA_TMP}
+
     # Creates a temp directory
     mkdir -p test/e2e/operator-test.deps
     cd test/e2e/operator-test.deps
@@ -66,22 +68,14 @@ function install_deps() {
     curl -o $GOBIN/opm -L https://github.com/operator-framework/operator-registry/releases/download/v1.26.5/linux-$(arch)-opm
     chmod +x $GOBIN/opm
 
-    # Serves a local registry
-    # When PR https://github.com/google/go-containerregistry/pull/1680
-    # is in a release the following few lines won't be necessary.
-    git clone https://github.com/google/go-containerregistry.git
-    cd go-containerregistry
-    git checkout $(git describe --tags) # latest tag
-    go build ./cmd/crane 
-    mv crane $GOBIN/
-    
+    GOFLAGS=-mod=mod go install github.com/google/go-containerregistry/cmd/crane@latest
+    mv ${HOME}/go/bin/crane $GOBIN/
+
     crane export $(arch)/registry:2 registry2.tar
     tar xvf registry2.tar bin/registry
     cp bin/registry ../
     mv bin/registry $GOBIN
-
     cd ..
-    rm -rf go-containerregistry/
     popd
   fi
 }
