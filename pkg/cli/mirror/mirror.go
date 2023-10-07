@@ -795,7 +795,8 @@ func (o *MirrorOptions) mirrorToDiskWrapper(ctx context.Context, cfg v1alpha2.Im
 	firstTagLatestImageByRepo := make(map[string]image.TypedImage)
 
 	for srcRef, dstRef := range mapping {
-
+		klog.Info("srcRef %s", srcRef)
+		klog.Info("dstRef %s", dstRef)
 		if dstRef.Ref.Tag == tagLatest {
 			if firstSrcRef, ok := firstTagLatestImageByRepo[srcRef.Ref.AsRepository().String()]; !ok {
 				firstTagLatestImageByRepo[srcRef.Ref.AsRepository().String()] = srcRef
