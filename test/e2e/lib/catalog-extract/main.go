@@ -49,8 +49,7 @@ func getCraneOpts(ctx context.Context, insecure bool) []crane.Option {
 		opts = append(opts, crane.Insecure)
 	}
 
-	// The test catalogs are linux/amd64.
-	// When running on non amd64 arches, it implies the local arch not amd64, and errors out.
+	// The test catalogs are multi-arch capable
 	var platform v1.Platform
 	if runtime.GOARCH == "ppc64le" {
 		platform = v1.Platform{Architecture: "ppc64le", OS: "linux"}

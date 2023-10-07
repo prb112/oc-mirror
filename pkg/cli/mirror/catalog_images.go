@@ -160,6 +160,7 @@ func (o *MirrorOptions) rebuildCatalogs(ctx context.Context, dstDir string) (ima
 	}
 
 	// update the catalogs in the OCI layout directory and push them to their destination
+	klog.Info("HERE IS WHERE IT IS CALLED")
 	if err := o.processCatalogRefs(ctx, catalogsByImage); err != nil {
 		return nil, err
 	}

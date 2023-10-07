@@ -1,0 +1,33 @@
+fix
+
+Signed-off-by: Paul Bastide <pbastide@redhat.com>
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# Date:      Fri Oct 6 14:37:54 2023 -0400
+#
+# On branch multiarch-fix-2
+# Your branch is up to date with 'origin/multiarch-fix-2'.
+#
+# Changes to be committed:
+#	modified:   pkg/cli/mirror/catalog_images.go
+#	modified:   pkg/cli/options.go
+#	modified:   test/e2e/configs/imageset-config-filter-max.yaml
+#	modified:   test/e2e/configs/imageset-config-filter-multi-prune.yaml
+#	modified:   test/e2e/configs/imageset-config-filter-multi.yaml
+#	modified:   test/e2e/configs/imageset-config-filter-range.yaml
+#	modified:   test/e2e/configs/imageset-config-filter-single.yaml
+#	modified:   test/e2e/configs/imageset-config-filter.yaml
+#	modified:   test/e2e/configs/imageset-config-full.yaml
+#	modified:   test/e2e/configs/imageset-config-headsonly-backend-registry.yaml
+#	modified:   test/e2e/configs/imageset-config-headsonly-newtarget.yaml
+#	modified:   test/e2e/configs/imageset-config-headsonly.yaml
+#	modified:   test/e2e/configs/imageset-config-oci-copy.yaml
+#	modified:   test/e2e/configs/imageset-config-skip-deps.yaml
+#	modified:   test/e2e/e2e-simple.sh
+#	modified:   test/e2e/lib/catalog-extract/main.go
+#	modified:   test/e2e/lib/check.sh
+#	modified:   test/e2e/lib/util.sh
+#	modified:   test/e2e/testcases.sh
+#
