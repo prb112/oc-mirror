@@ -263,8 +263,10 @@ func (o *MirrorOptions) processCatalogRefs(ctx context.Context, catalogsByImage 
 			}
 			// Fix OCPBUGS-17546:
 			// Add the cache under /cache in a new layer (instead of white-out /tmp/cache, which resulted in crashLoopBackoff only on some clusters)
+			klog.Infof("With CacheRegeneration is running LayerFromPathWithUidGid")
 			cacheLayerToAdd, err := builder.LayerFromPathWithUidGid("/cache", filepath.Join(artifactDir, config.TmpDir), cacheFolderUID, cacheFolderGID)
 			if err != nil {
+				klog.Infof("With CacheRegeneration is running LayerFromPathWithUidGid err")
 				return fmt.Errorf("error creating add layer: %v", err)
 			}
 			layersToAdd = append(layersToAdd, cacheLayerToAdd)
@@ -291,9 +293,11 @@ func (o *MirrorOptions) processCatalogRefs(ctx context.Context, catalogsByImage 
 			// Although it was prefered to keep the entrypoint and command as it was
 			// we couldnt reuse /tmp/cache as the cache directory (OCPBUGS-17546)
 			if withCacheRegeneration {
+				klog.Infof("With CacheRegeneration is running in update for configs")
 				cfg.Config.Cmd = []string{"serve", "/configs", "--cache-dir=/cache"}
 			} else { // this means that no cache was found in the original catalog (old catalog with opm < 1.25)
 				cfg.Config.Cmd = []string{"serve", "/configs"}
+
 			}
 		}
 		if err := imgBuilder.Run(ctx, refExact, layoutPath, update, layers...); err != nil {
