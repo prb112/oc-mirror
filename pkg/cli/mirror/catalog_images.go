@@ -198,7 +198,9 @@ processCatalogRefs uses the image builder to update a given image using the data
 • error: non-nil if error occurs, nil otherwise
 */
 func (o *MirrorOptions) processCatalogRefs(ctx context.Context, catalogsByImage map[image.TypedImage]string) error {
+	klog.Info("CTLGREF IS WHERE IT IS CALLED")
 	for ctlgRef, artifactDir := range catalogsByImage {
+		klog.Info("CTLGREF IS WHERE IT IS CALLED - FOR LOOP")
 		// Always build the catalog image with the new declarative config catalog
 		// using the original catalog as the base image
 		var layoutPath layout.Path
@@ -317,12 +319,14 @@ func extractOPMAndCache(ctx context.Context, srcRef image.TypedImageReference, c
 	var err error
 	refExact := srcRef.Ref.Exact()
 	if srcRef.OCIFBCPath == "" {
+		klog.Info("HERE IS WHERE IT IS CALLED OCIFBCPath")
 		remoteOpts := getCraneOpts(ctx, insecure)
 		img, err = crane.Pull(refExact, remoteOpts...)
 		if err != nil {
 			return fmt.Errorf("unable to pull image from %s: %v", refExact, err)
 		}
 	} else {
+		klog.Info("HERE IS WHERE IT IS CALLED getPlatformImageFromOCIIndex")
 		img, err = getPlatformImageFromOCIIndex(v1alpha2.TrimProtocol(srcRef.OCIFBCPath), runtime.GOARCH, runtime.GOOS)
 		if err != nil {
 			return err
@@ -478,7 +482,9 @@ func deleteLayer(old string) (v1.Layer, error) {
 func copyOPMBinary(img v1.Image, ctlgSrcDir string) (string, error) {
 	targetOpm := filepath.Join(ctlgSrcDir, config.OpmBinDir, "opm")
 	cfgf, err := img.ConfigFile()
+	klog.Info("HERE COPY OPM BIN")
 	if err != nil {
+		klog.Info("HERE COPY OPM BIN err")
 		return "", err
 	}
 	opmBin := ""
