@@ -113,12 +113,16 @@ function setup_reg() {
 # prep_registry will copy the needed catalog image
 # to the connected registry
 function prep_registry() {
-   local CATALOGTAG="${1:?CATALOGTAG required}"
+  local CATALOGTAG="${1:?CATALOGTAG required}"
+  # To pull a manifest-listed catalog registry to test
+  CATALOG_ARCH="$(arch | sed 's|aarch64|arm64|g')"
+
   # Copy target catalog to connected registry
-    crane copy --insecure ${CATALOGREGISTRY}/${CATALOGNAMESPACE}:${CATALOGTAG} \
+  crane copy --insecure ${CATALOGREGISTRY}/${CATALOGNAMESPACE}:${CATALOGTAG} \
+    --platform linux/${CATALOG_ARCH} \
     localhost.localdomain:${REGISTRY_CONN_PORT}/${CATALOGNAMESPACE}:test-catalog-latest
 
-    CATALOGDIGEST=$(crane digest --insecure localhost.localdomain:${REGISTRY_CONN_PORT}/${CATALOGNAMESPACE}:test-catalog-latest)
+   CATALOGDIGEST=$(crane digest --insecure --platform linux/${CATALOG_ARCH} localhost.localdomain:${REGISTRY_CONN_PORT}/${CATALOGNAMESPACE}:test-catalog-latest)
 }
 
 
@@ -198,7 +202,7 @@ function setup_helm_testdata() {
   find "$DATA_DIR" -type f -exec sed -i -E 's@DATA_TMP@'"$DATA_DIR"'@g' {} \;
 }
 
-# setup_operator_testdata will move required
+# prepare_mirror_testdata will move required
 # files in place to do operator testing
 function prepare_mirror_testdata() {
   local DATA_DIR="${1:?DATA_DIR required}"
@@ -222,6 +226,6 @@ function prepare_oci_testdata() {
   local DATA_DIR="${1:?DATA_DIR required}"
   mkdir -p "${DATA_DIR}/mirror_oci"
   tar xfz "${DIR}/artifacts/${OCI_CTLG_PATH}" -C "${DATA_DIR}/mirror_oci"
-  mkdir -p  "olm_artifacts/oc-mirror-dev"
-  cp -r "${DIR}/artifacts/configs"  "olm_artifacts/oc-mirror-dev/"
+  mkdir -p "olm_artifacts/oc-mirror-dev"
+  cp -r "${DIR}/artifacts/configs" "olm_artifacts/oc-mirror-dev/"
 }

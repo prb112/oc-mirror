@@ -22,7 +22,7 @@ function check_bundles() {
   go run -mod=readonly test/e2e/lib/catalog-extract/main.go $catalog_image $extraction_dir/temp.tar
   
   # extract declarative config from tar file
-  tar xvf $extraction_dir/temp.tar /configs/index.json --strip-components=1 
+  tar xvf $extraction_dir/temp.tar /configs/index.json --strip-components=1
   mv index.json $index_dir
 
   # extract the cache from the tar file
