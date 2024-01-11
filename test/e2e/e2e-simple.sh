@@ -22,8 +22,10 @@ MIRROR_OCI_DIR="${DATA_TMP}/mirror_oci"
 OCI_CTLG_PATH="oc-mirror-dev.tgz"
 WORKSPACE="oc-mirror-workspace"
 CATALOGREGISTRY="quay.io"
-CATALOGORG="skhoury"
-CATALOGNAMESPACE="skhoury/oc-mirror-dev"
+CATALOGORG="${ENV_CATALOGORG:-skhoury}"
+CATALOGNAMESPACE="${ENV_CATALOGNAMESPACE:-skhoury/oc-mirror-dev}"
+# The default is the amd64 catalog, otherwise. Architecture specific tests can pass in the correct value.
+CATALOG_ID="${ENV_CATALOG_ID:-86fa1b12}"
 REGISTRY_CONN_PORT=5000
 REGISTRY_DISCONN_PORT=5001
 METADATA_REGISTRY="localhost.localdomain:$REGISTRY_CONN_PORT"
