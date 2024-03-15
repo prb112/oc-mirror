@@ -106,7 +106,7 @@ function workflow_m2m_oci_catalog() {
   prepare_oci_testdata "${DATA_TMP}"
   prepare_mirror_testdata "${DATA_TMP}" "${MIRROR_OCI_DIR}" "${config}" false 
  
-  # call oc-mirror
+ # call oc-mirror
   run_cmd --config "${MIRROR_OCI_DIR}/${config}" $CREATE_FLAGS "${remote_image}"
 }
 

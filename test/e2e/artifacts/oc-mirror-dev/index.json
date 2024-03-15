@@ -1,0 +1,1 @@
+{"schemaVersion":2,"manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:48e60081527b331f29163f320651b24aab51b069917673e722e05fcf047262f3","size":2427,"annotations":{"org.opencontainers.image.ref.name":"quay.io/powercloud/oc-mirror-dev:test-catalog-latest"}}]}

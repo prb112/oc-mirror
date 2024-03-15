@@ -19,4 +19,4 @@ mirror:
       minVersion: 1.0.1
       maxVersion: 1.0.1
   additionalImages:
-    - name: quay.io/redhatgov/oc-mirror-dev:bar-v0.1.0
+    - name: quay.io/powercloud/oc-mirror-dev:bar-v0.1.0

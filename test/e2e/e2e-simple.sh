@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -eu
+set -x
 
 DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 source "$DIR/lib/check.sh"
@@ -19,11 +20,11 @@ PUBLISH_DIFF_DIR="${DATA_TMP}/publish_diff"
 REGISTRY_CONN_DIR="${DATA_TMP}/conn"
 REGISTRY_DISCONN_DIR="${DATA_TMP}/disconn"
 MIRROR_OCI_DIR="${DATA_TMP}/mirror_oci"
-OCI_CTLG_PATH="oc-mirror-dev.tgz"
+OCI_CTLG_PATH="oc-mirror-power-dev.tgz"
 WORKSPACE="oc-mirror-workspace"
 CATALOGREGISTRY="quay.io"
-CATALOGORG="${ENV_CATALOGORG:-skhoury}"
-CATALOGNAMESPACE="${ENV_CATALOGNAMESPACE:-skhoury/oc-mirror-dev}"
+CATALOGORG="${ENV_CATALOGORG:-powercloud}"
+CATALOGNAMESPACE="${ENV_CATALOGNAMESPACE:-powercloud/oc-mirror-dev}"
 REGISTRY_CONN_PORT=5000
 REGISTRY_DISCONN_PORT=5001
 METADATA_REGISTRY="localhost.localdomain:$REGISTRY_CONN_PORT"

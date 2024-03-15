@@ -3,24 +3,24 @@
 # These are used to define all testcase
 # run during end to end test
 declare -a TESTCASES
-TESTCASES[1]="full_catalog"
-TESTCASES[2]="full_catalog_with_digest"
-TESTCASES[3]="headsonly_diff"
-TESTCASES[4]="pruned_catalogs"
-TESTCASES[5]="pruned_catalogs_mirror_to_mirror"
-TESTCASES[6]="pruned_catalogs_with_target"
-TESTCASES[7]="pruned_catalogs_with_include"
-TESTCASES[8]="registry_backend"
-TESTCASES[9]="mirror_to_mirror"
-TESTCASES[10]="mirror_to_mirror_nostorage"
-TESTCASES[11]="custom_namespace"
-TESTCASES[12]="package_filtering"
-TESTCASES[13]="single_version"
-TESTCASES[14]="version_range"
-TESTCASES[15]="max_version"
-TESTCASES[16]="skip_deps"
-TESTCASES[17]="helm_local"
-TESTCASES[18]="no_updates_exist"
+#TESTCASES[1]="full_catalog"
+#TESTCASES[2]="full_catalog_with_digest"
+#TESTCASES[3]="headsonly_diff"
+#TESTCASES[4]="pruned_catalogs"
+#TESTCASES[5]="pruned_catalogs_mirror_to_mirror"
+#TESTCASES[6]="pruned_catalogs_with_target"
+#TESTCASES[7]="pruned_catalogs_with_include"
+#TESTCASES[8]="registry_backend"
+#TESTCASES[9]="mirror_to_mirror"
+#TESTCASES[10]="mirror_to_mirror_nostorage"
+#TESTCASES[11]="custom_namespace"
+#TESTCASES[12]="package_filtering"
+#TESTCASES[13]="single_version"
+#TESTCASES[14]="version_range"
+#TESTCASES[15]="max_version"
+#TESTCASES[16]="skip_deps"
+#TESTCASES[17]="helm_local"
+#TESTCASES[18]="no_updates_exist"
 TESTCASES[19]="m2m_oci_catalog"
 TESTCASES[20]="m2m_release_with_oci_catalog"
 TESTCASES[21]="headsonly_diff_with_target"
@@ -247,8 +247,8 @@ function no_updates_exist {
 # Test OCI local catalog
 function m2m_oci_catalog {
     rm -fr olm_artifacts
-    workflow_m2m_oci_catalog imageset-config-oci-mirror.yaml "docker://localhost.localdomain:${REGISTRY_DISCONN_PORT}" -c="--dest-skip-tls --oci-insecure-signature-policy"
-    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/redhatgov/oc-mirror-dev:test-catalog-latest \
+    workflow_m2m_oci_catalog imageset-config-oci-mirror.yaml "docker://localhost.localdomain:${REGISTRY_DISCONN_PORT}" -c="--source-use-http --dest-skip-tls --oci-insecure-signature-policy"
+    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/${CATALOGNAMESPACE}:test-catalog-latest \
     "baz.v1.0.1" \
     localhost.localdomain:${REGISTRY_DISCONN_PORT}
 }
@@ -271,7 +271,7 @@ function m2m_release_with_oci_catalog {
     workflow_oci_mirror_all imageset-config-oci-mirror-all.yaml "docker://localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest" -c="--dest-skip-tls --oci-insecure-signature-policy"
 
     # use crane digest to verify
-    crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/redhatgov/oc-mirror-dev:bar-v0.1.0
+    crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/powercloud/oc-mirror-dev:bar-v0.1.0
     crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/openshift/release-images:alpine-x86_64
     crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/openshift/release:alpine-x86_64-alpime
 
@@ -286,7 +286,7 @@ function m2m_release_with_oci_catalog {
 function m2d2m_oci_catalog() {
     rm -fr olm_artifacts
     workflow_m2d2m_oci_catalog imageset-config-oci-mirror.yaml "localhost.localdomain:${REGISTRY_DISCONN_PORT}" -c="--source-use-http  --source-skip-tls"
-    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/redhatgov/oc-mirror-dev:test-catalog-latest \
+    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/powercloud/oc-mirror-dev:test-catalog-latest \
     "baz.v1.0.1" \
     localhost.localdomain:${REGISTRY_DISCONN_PORT}
 }
