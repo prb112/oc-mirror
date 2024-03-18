@@ -183,6 +183,8 @@ function setup_operator_testdata() {
   find "$DATA_DIR" -type f -exec sed -i -E 's@TARGET_CATALOG_TAG@'"$TARGET_CATALOG_TAG"'@g' {} \;
   find "$DATA_DIR" -type f -exec sed -i -E 's@DATA_TMP@'"$DATA_DIR"'@g' {} \;
   find "$DATA_DIR" -type f -exec sed -i -E 's@MIRROR_OCI_DIR@'"$MIRROR_OCI_DIR"'@g' {} \;
+  find "$DATA_DIR" -type f -exec sed -i -E 's@REGISTRY_NAMESPACE@'"$REGISTRY_NAMESPACE"'@g' {} \;
+  find "$DATA_DIR" -type f -exec sed -i -E 's@CATALOG_ARCH@'"$CATALOG_ARCH"'@g' {} \;
 }
 
 # setup_helm_testdata will move required
@@ -217,6 +219,8 @@ function prepare_mirror_testdata() {
   find "$DATA_DIR" -type f -exec sed -i -E 's@TARGET_CATALOG_TAG@'"$TARGET_CATALOG_TAG"'@g' {} \;
   find "$DATA_DIR" -type f -exec sed -i -E 's@DATA_TMP@'"$DATA_DIR"'@g' {} \;
   find "$DATA_DIR" -type f -exec sed -i -E 's@MIRROR_OCI_DIR@'"$MIRROR_OCI_DIR"'@g' {} \;
+  find "$DATA_DIR" -type f -exec sed -i -E 's@REGISTRY_NAMESPACE@'"$REGISTRY_NAMESPACE"'@g' {} \;
+  find "$DATA_DIR" -type f -exec sed -i -E 's@CATALOG_ARCH@'"$CATALOG_ARCH"'@g' {} \;
 }
 
 function prepare_oci_testdata() {

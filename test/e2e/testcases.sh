@@ -26,7 +26,6 @@ TESTCASES[20]="m2m_release_with_oci_catalog"
 TESTCASES[21]="headsonly_diff_with_target"
 TESTCASES[22]="m2d2m_oci_catalog"
 
-
 # Test full catalog mode.
 function full_catalog() {
     workflow_full imageset-config-full.yaml "test-catalog-latest" -c="--source-use-http --source-skip-tls"
@@ -248,7 +247,7 @@ function no_updates_exist {
 function m2m_oci_catalog {
     rm -fr olm_artifacts
     workflow_m2m_oci_catalog imageset-config-oci-mirror.yaml "docker://localhost.localdomain:${REGISTRY_DISCONN_PORT}" -c="--dest-skip-tls --oci-insecure-signature-policy"
-    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/redhatgov/oc-mirror-dev:test-catalog-latest \
+    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/${REGISTRY_NAMESPACE}/oc-mirror-dev:test-catalog-latest \
     "baz.v1.0.1" \
     localhost.localdomain:${REGISTRY_DISCONN_PORT}
 }
@@ -271,7 +270,7 @@ function m2m_release_with_oci_catalog {
     workflow_oci_mirror_all imageset-config-oci-mirror-all.yaml "docker://localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest" -c="--dest-skip-tls --oci-insecure-signature-policy"
 
     # use crane digest to verify
-    crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/redhatgov/oc-mirror-dev:bar-v0.1.0
+    crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/${REGISTRY_NAMESPACE}/oc-mirror-dev:bar-v0.1.0
     crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/openshift/release-images:alpine-x86_64
     crane digest --insecure localhost.localdomain:${REGISTRY_DISCONN_PORT}/test-catalog-latest/openshift/release:alpine-x86_64-alpime
 
@@ -286,7 +285,7 @@ function m2m_release_with_oci_catalog {
 function m2d2m_oci_catalog() {
     rm -fr olm_artifacts
     workflow_m2d2m_oci_catalog imageset-config-oci-mirror.yaml "localhost.localdomain:${REGISTRY_DISCONN_PORT}" -c="--source-use-http  --source-skip-tls"
-    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/redhatgov/oc-mirror-dev:test-catalog-latest \
+    check_bundles localhost.localdomain:${REGISTRY_DISCONN_PORT}/${REGISTRY_NAMESPACE}/oc-mirror-dev:test-catalog-latest \
     "baz.v1.0.1" \
     localhost.localdomain:${REGISTRY_DISCONN_PORT}
 }

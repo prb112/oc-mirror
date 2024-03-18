@@ -19,11 +19,24 @@ PUBLISH_DIFF_DIR="${DATA_TMP}/publish_diff"
 REGISTRY_CONN_DIR="${DATA_TMP}/conn"
 REGISTRY_DISCONN_DIR="${DATA_TMP}/disconn"
 MIRROR_OCI_DIR="${DATA_TMP}/mirror_oci"
-OCI_CTLG_PATH="oc-mirror-dev.tgz"
+TARGET_ARCH=$(arch | sed 's|x86_64|amd64|g' | sed 's|aarch64|arm64|g')  
+if [ ${TARGET_ARCH} == "x86_64" ]
+then
+	OCI_CTLG_PATH="oc-mirror-dev.tgz"
+	CATALOGORG="skhoury"
+	CATALOGNAMESPACE="skhoury/oc-mirror-dev"
+        REGISTRY_NAMESPACE="redhatgov"
+	CATALOG_ARCH="oc-mirror-dev"
+else
+	OCI_CTLG_PATH="oc-mirror-${TARGET_ARCH}-dev.tgz"
+	CATALOGORG="powercloud"
+	CATALOGNAMESPACE="powercloud/oc-mirror-dev"
+	REGISTRY_NAMESPACE="powercloud"
+	CATALOG_ARCH="oc-mirror-ppc64le-dev"
+fi
+echo ${CATALOG_ARCH}
 WORKSPACE="oc-mirror-workspace"
 CATALOGREGISTRY="quay.io"
-CATALOGORG="${ENV_CATALOGORG:-skhoury}"
-CATALOGNAMESPACE="${ENV_CATALOGNAMESPACE:-skhoury/oc-mirror-dev}"
 REGISTRY_CONN_PORT=5000
 REGISTRY_DISCONN_PORT=5001
 METADATA_REGISTRY="localhost.localdomain:$REGISTRY_CONN_PORT"
