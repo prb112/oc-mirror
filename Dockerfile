@@ -14,6 +14,9 @@ ARG DNF_LIST="\
   git \
   gpgme-devel \
   libassuan-devel \
+  device-mapper-devel \
+  btrfs-progs-devel \
+  pkg-config \
   wget \
   pigz \
   procps-ng \
@@ -25,7 +28,7 @@ RUN set -ex \
      && ARCH=$(arch | sed 's|x86_64|amd64|g' | sed 's|aarch64|arm64|g')         \
      && dnf install -y --nodocs --setopt=install_weak_deps=false ${DNF_LIST}    \
      && dnf clean all -y                                                        \
-     && GO_VERSION=go1.23.5                                                     \
+     && GO_VERSION=go1.24.3                                                     \
      && curl -sL https://golang.org/dl/${GO_VERSION}.linux-${ARCH}.tar.gz       \
         | tar xzvf - --directory /usr/local/                                    \
      && /usr/local/go/bin/go version                                            \
