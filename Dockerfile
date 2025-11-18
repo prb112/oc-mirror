@@ -14,9 +14,10 @@ ARG DNF_LIST="\
   git \
   gpgme-devel \
   libassuan-devel \
+  libgpg-error-devel \
   device-mapper-devel \
   btrfs-progs-devel \
-  pkg-config \
+  pkgconfig \
   wget \
   pigz \
   procps-ng \
