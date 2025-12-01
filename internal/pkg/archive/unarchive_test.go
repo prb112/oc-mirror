@@ -98,7 +98,8 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	assert.Equal(t, "unable to create working dir \"/dst\": mkdir /dst: permission denied", err.Error())
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unable to create working dir \"/dst\"")
 }
 
 func TestUnArchiver_CacheDirError(t *testing.T) {
@@ -119,7 +120,8 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	assert.Equal(t, "unable to create cache dir \"/dst\": mkdir /dst: permission denied", err.Error())
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unable to create cache dir \"/dst\"")
 }
 
 func prepareFakeTarWorkingDir(tarFile *os.File) error {

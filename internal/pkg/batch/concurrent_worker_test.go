@@ -206,15 +206,16 @@ func TestChannelConcurrentWorker(t *testing.T) {
 
 		errorMsg := err.Error()
 
-		pattern := `/tmp/[^\s]+`
+		// Match file paths that start with / and contain common temp directory patterns
+		pattern := `(/tmp/[^\s]+|/var/folders/[^\s]+)`
 		regex, err := regexp.Compile(pattern)
 		assert.NoError(t, err)
 
 		filePath := regex.FindString(errorMsg)
-		assert.NotEmpty(t, filePath)
+		assert.NotEmpty(t, filePath, "Expected to find a file path in error message: %s", errorMsg)
 
 		fileContent, err := os.ReadFile(filePath)
-		assert.NoError(t, err)
+		assert.NoError(t, err, "Failed to read error log file: %s", filePath)
 
 		expectedMsg := "error mirroring image %s (Operator bundles: [bundle-c] - Operators: [operator-c]) error: unauthorized: unauthorized"
 		assert.Contains(t, string(fileContent), fmt.Sprintf(expectedMsg, relatedImages[0].Origin))

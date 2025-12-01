@@ -946,10 +946,10 @@ func TestExcludeImages(t *testing.T) {
 }
 
 func TestExecutorCheckRegistryAccess(t *testing.T) {
-	const validRegistry = "localhost:5000"
 	testFolder := t.TempDir()
 	regCfg, err := setupRegForTest(testFolder)
 	assert.NoError(t, err, "failed to parse local registry config")
+	validRegistry := regCfg.HTTP.Addr
 	reg, err := registry.NewRegistry(context.Background(), regCfg)
 	assert.NoError(t, err, "failed to create local registry service")
 	global := &mirror.GlobalOptions{
@@ -1204,24 +1204,20 @@ storage:
   filesystem:
     rootdirectory: %v
 http:
-  addr: :%d
+  addr: localhost:%d
   headers:
     X-Content-Type-Options: [nosniff]
 health:
   storagedriver:
     enabled: false
 `
-	port := 5000
-	for {
-		addr := fmt.Sprintf("localhost:%d", port)
-		conn, err := net.Dial("tcp", addr)
-		if err == nil {
-			conn.Close()
-			port++
-		} else {
-			break
-		}
+	// Find an available port by actually binding to it
+	listener, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		return &configuration.Configuration{}, fmt.Errorf("error finding available port: %v", err)
 	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	listener.Close()
 	configYamlV01 = fmt.Sprintf(configYamlV01, testFolder, port)
 	config, err := configuration.Parse(bytes.NewReader([]byte(configYamlV01)))
 	if err != nil {
