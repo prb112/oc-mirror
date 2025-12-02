@@ -223,7 +223,10 @@ func FileFromTemplate(filePath, templatePath string, tokens []string) error {
 }
 
 func ImageExists(imgRef string) (bool, error) {
-	desc, err := crane.Head(imgRef)
+	desc, err := crane.Head(imgRef, crane.WithPlatform(&v1.Platform{
+		OS:           "linux",
+		Architecture: "amd64",
+	}))
 	if err != nil {
 		return false, err
 	}
