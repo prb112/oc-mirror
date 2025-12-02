@@ -111,13 +111,19 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 		t.Fatalf("failed to close file: %v", err)
 	}
 
-	o, err := NewArchiveExtractor(testFolder, filepath.Join("/", "dst"), filepath.Join(testFolder, "dst"))
+	// Create a file with the same name as the working directory to force mkdir to fail
+	workingDirPath := filepath.Join(testFolder, "working-dir-blocker")
+	if err := os.WriteFile(workingDirPath, []byte("blocker"), 0644); err != nil {
+		t.Fatalf("failed to create blocker file: %v", err)
+	}
+
+	o, err := NewArchiveExtractor(testFolder, workingDirPath, filepath.Join(testFolder, "dst"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "unable to create working dir \"/dst\"")
+	assert.Contains(t, err.Error(), "unable to create working dir")
 }
 
 func TestUnArchiver_CacheDirError(t *testing.T) {
@@ -151,13 +157,19 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 		t.Fatalf("failed to close file: %v", err)
 	}
 
-	o, err := NewArchiveExtractor(testFolder, filepath.Join(testFolder, "dst"), filepath.Join("/", "dst"))
+	// Create a file with the same name as the cache directory to force mkdir to fail
+	cacheDirPath := filepath.Join(testFolder, "cache-dir-blocker")
+	if err := os.WriteFile(cacheDirPath, []byte("blocker"), 0644); err != nil {
+		t.Fatalf("failed to create blocker file: %v", err)
+	}
+
+	o, err := NewArchiveExtractor(testFolder, filepath.Join(testFolder, "dst"), cacheDirPath)
 	if err != nil {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "unable to create cache dir \"/dst\"")
+	assert.Contains(t, err.Error(), "unable to create cache dir")
 }
 
 func prepareFakeTarWorkingDir(tarFile *os.File) error {
