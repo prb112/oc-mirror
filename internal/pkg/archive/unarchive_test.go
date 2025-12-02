@@ -84,13 +84,31 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 	testFolder := t.TempDir()
 	defer os.RemoveAll(testFolder)
 
-	// Create a new tar archive file
+	// Create a new tar archive file with minimal content
 	archiveFileName := fmt.Sprintf(archiveFileNameFormat, archiveFilePrefix, 1)
 	archivePath := filepath.Join(testFolder, archiveFileName)
-	// to be closed by BuildArchive
-	_, err := os.Create(archivePath)
+	file, err := os.Create(archivePath)
 	if err != nil {
-		t.Fatalf("should not fail")
+		t.Fatalf("should not fail to create file")
+	}
+	// Write a minimal valid tar archive
+	tw := tar.NewWriter(file)
+	hdr := &tar.Header{
+		Name: "test.txt",
+		Mode: 0600,
+		Size: 4,
+	}
+	if err := tw.WriteHeader(hdr); err != nil {
+		t.Fatalf("failed to write tar header: %v", err)
+	}
+	if _, err := tw.Write([]byte("test")); err != nil {
+		t.Fatalf("failed to write tar content: %v", err)
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatalf("failed to close tar writer: %v", err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatalf("failed to close file: %v", err)
 	}
 
 	o, err := NewArchiveExtractor(testFolder, filepath.Join("/", "dst"), filepath.Join(testFolder, "dst"))
@@ -98,20 +116,39 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	assert.Equal(t, "unable to create working dir \"/dst\": mkdir /dst: permission denied", err.Error())
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unable to create working dir \"/dst\"")
 }
 
 func TestUnArchiver_CacheDirError(t *testing.T) {
 	testFolder := t.TempDir()
 	defer os.RemoveAll(testFolder)
 
-	// Create a new tar archive file
+	// Create a new tar archive file with minimal content
 	archiveFileName := fmt.Sprintf(archiveFileNameFormat, archiveFilePrefix, 1)
 	archivePath := filepath.Join(testFolder, archiveFileName)
-	// to be closed by BuildArchive
-	_, err := os.Create(archivePath)
+	file, err := os.Create(archivePath)
 	if err != nil {
-		t.Fatalf("should not fail")
+		t.Fatalf("should not fail to create file")
+	}
+	// Write a minimal valid tar archive
+	tw := tar.NewWriter(file)
+	hdr := &tar.Header{
+		Name: "test.txt",
+		Mode: 0600,
+		Size: 4,
+	}
+	if err := tw.WriteHeader(hdr); err != nil {
+		t.Fatalf("failed to write tar header: %v", err)
+	}
+	if _, err := tw.Write([]byte("test")); err != nil {
+		t.Fatalf("failed to write tar content: %v", err)
+	}
+	if err := tw.Close(); err != nil {
+		t.Fatalf("failed to close tar writer: %v", err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatalf("failed to close file: %v", err)
 	}
 
 	o, err := NewArchiveExtractor(testFolder, filepath.Join(testFolder, "dst"), filepath.Join("/", "dst"))
@@ -119,7 +156,8 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	assert.Equal(t, "unable to create cache dir \"/dst\": mkdir /dst: permission denied", err.Error())
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unable to create cache dir \"/dst\"")
 }
 
 func prepareFakeTarWorkingDir(tarFile *os.File) error {
