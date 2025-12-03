@@ -158,8 +158,9 @@ func (o MakeDir) makeDirAll(dir string, mode os.FileMode) error {
 // NewMirrorCmd - cobra entry point
 func NewMirrorCmd(log clog.PluggableLoggerInterface) *cobra.Command {
 	global := &mirror.GlobalOptions{
-		IsTerminal:   term.IsTerminal(int(os.Stdout.Fd())),
-		OverrideArch: "amd64",
+		IsTerminal:      term.IsTerminal(int(os.Stdout.Fd())),
+		OverrideArch:    "amd64",
+		OverrideVariant: "linux/amd64",
 	}
 
 	flagSharedOpts, sharedOpts := mirror.SharedImageFlags()
