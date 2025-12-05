@@ -127,7 +127,7 @@ func buildAndPushFakeImage(content map[string][]byte, imgRef string, dir string)
 		return "", err
 	}
 	i, _ := crane.Image(content)
-	if err := crane.Push(i, tag.String()); err != nil {
+	if err := crane.Push(i, tag.String(), crane.WithPlatform(&v1.Platform{OS: "linux", Architecture: "amd64"})); err != nil {
 		return "", err
 	}
 	if dir == "" {
