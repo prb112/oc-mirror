@@ -88,10 +88,13 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 	archiveFileName := fmt.Sprintf(archiveFileNameFormat, archiveFilePrefix, 1)
 	archivePath := filepath.Join(testFolder, archiveFileName)
 	// to be closed by BuildArchive
-	_, err := os.Create(archivePath)
+	archiveFile, err := os.Create(archivePath)
 	if err != nil {
 		t.Fatalf("should not fail")
 	}
+
+	err = prepareFakeTar(archiveFile)
+	assert.NoError(t, err, "should not fail")
 
 	o, err := NewArchiveExtractor(testFolder, filepath.Join("/", "dst"), filepath.Join(testFolder, "dst"))
 	if err != nil {

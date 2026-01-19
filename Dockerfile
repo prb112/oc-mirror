@@ -38,7 +38,7 @@ RUN [ "$(arch)" == "s390x" ]                                                    
      || echo "Not running on s390x, skip linking gcc binary"
 
 WORKDIR /build
-ENTRYPOINT ["make"]
+#ENTRYPOINT ["make"]
 CMD []
 
 ENV PATH="/root/platform/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
