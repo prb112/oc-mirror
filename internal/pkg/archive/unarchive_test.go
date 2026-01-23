@@ -88,10 +88,13 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 	archiveFileName := fmt.Sprintf(archiveFileNameFormat, archiveFilePrefix, 1)
 	archivePath := filepath.Join(testFolder, archiveFileName)
 	// to be closed by BuildArchive
-	_, err := os.Create(archivePath)
+	archiveFile, err := os.Create(archivePath)
 	if err != nil {
 		t.Fatalf("should not fail")
 	}
+
+	err = prepareDummyTar(archiveFile)
+	assert.NoError(t, err, "should not fail")
 
 	o, err := NewArchiveExtractor(testFolder, filepath.Join("/", "dst"), filepath.Join(testFolder, "dst"))
 	if err != nil {
@@ -109,10 +112,13 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 	archiveFileName := fmt.Sprintf(archiveFileNameFormat, archiveFilePrefix, 1)
 	archivePath := filepath.Join(testFolder, archiveFileName)
 	// to be closed by BuildArchive
-	_, err := os.Create(archivePath)
+	archiveFile, err := os.Create(archivePath)
 	if err != nil {
 		t.Fatalf("should not fail")
 	}
+
+	err = prepareFakeTar(archiveFile)
+	assert.NoError(t, err, "should not fail")
 
 	o, err := NewArchiveExtractor(testFolder, filepath.Join(testFolder, "dst"), filepath.Join("/", "dst"))
 	if err != nil {
@@ -234,6 +240,33 @@ func prepareFakeTar(tarFile *os.File) error {
 	}
 	err = prepareFakeTarCacheDir(tarFile)
 	return err
+}
+
+// prepareDummyTar creates a minimal tar archive with dummy content.
+// This is a simple helper that doesn't depend on external test fixtures.
+func prepareDummyTar(tarFile *os.File) error {
+	tarWriter := tar.NewWriter(tarFile)
+	defer tarWriter.Close()
+
+	// Create a simple dummy file entry
+	content := []byte("dummy test content")
+	header := &tar.Header{
+		Name: "working-dir/test.txt",
+		Mode: 0644,
+		Size: int64(len(content)),
+	}
+
+	// Write the header
+	if err := tarWriter.WriteHeader(header); err != nil {
+		return fmt.Errorf("error writing tar header: %w", err)
+	}
+
+	// Write the content
+	if _, err := tarWriter.Write(content); err != nil {
+		return fmt.Errorf("error writing tar content: %w", err)
+	}
+
+	return nil
 }
 
 func TestSanitizeArchivePath(t *testing.T) {
