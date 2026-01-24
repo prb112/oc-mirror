@@ -251,7 +251,7 @@ func prepareDummyTar(tarFile *os.File) error {
 	// Create a simple dummy file entry
 	content := []byte("dummy test content")
 	header := &tar.Header{
-		Name: "working-dir/test.txt",
+		Name: "test.txt",
 		Mode: 0644,
 		Size: int64(len(content)),
 	}
