@@ -165,7 +165,12 @@ func sanitizeArchivePath(dir, filePath string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("get absolute path for %q: %w", dir, err)
 	}
-	if strings.HasPrefix(absV, absDir+string(os.PathSeparator)) {
+	// Ensure absDir ends with a path separator for proper prefix checking
+	// unless it's the root directory which already ends with separator on Unix
+	if !strings.HasSuffix(absDir, string(os.PathSeparator)) {
+		absDir += string(os.PathSeparator)
+	}
+	if strings.HasPrefix(absV, absDir) || absV == strings.TrimSuffix(absDir, string(os.PathSeparator)) {
 		return v, nil
 	}
 	return "", fmt.Errorf("content filepath is tainted: %s", v)
