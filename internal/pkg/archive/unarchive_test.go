@@ -101,10 +101,17 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
-	if err.Error() != "unable to create working dir \"/dst\": mkdir /dst: permission denied" &&
-		err.Error() != "unable to create working dir \"/dst\": mkdir /dst: read-only file system" {
-		t.Errorf("unexpected error: %v", err)
+	// Test expects an error when trying to create working directory at root level (/dst)
+	// This should fail with permission denied or read-only file system error
+	// However, if the error is nil or different, we need to handle it properly
+	if err == nil {
+		t.Errorf("expected an error but got nil")
+	} else {
+		// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
+		if err.Error() != "unable to create working dir \"/dst\": mkdir /dst: permission denied" &&
+			err.Error() != "unable to create working dir \"/dst\": mkdir /dst: read-only file system" {
+			t.Errorf("unexpected error: %v", err)
+		}
 	}
 }
 
@@ -129,10 +136,18 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
-	if err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: permission denied" &&
-		err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: read-only file system" {
-		t.Errorf("unexpected error: %v", err)
+	// Test expects an error when trying to create cache directory at root level (/dst)
+	// The working directory creation succeeds (it's in testFolder), but cache dir creation
+	// should fail with permission denied or read-only file system error
+	// Must check if err is nil before calling err.Error() to avoid panic
+	if err == nil {
+		t.Errorf("expected an error but got nil")
+	} else {
+		// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
+		if err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: permission denied" &&
+			err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: read-only file system" {
+			t.Errorf("unexpected error: %v", err)
+		}
 	}
 }
 
