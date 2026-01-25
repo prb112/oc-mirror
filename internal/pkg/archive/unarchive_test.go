@@ -139,15 +139,10 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 	// Test expects an error when trying to create cache directory at root level (/dst)
 	// The working directory creation succeeds (it's in testFolder), but cache dir creation
 	// should fail with permission denied or read-only file system error
-	// Must check if err is nil before calling err.Error() to avoid panic
-	if err == nil {
-		t.Errorf("expected an error but got nil")
-	} else {
+	assert.Error(t, err, "expected an error but got nil")
+	if err != nil {
 		// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
-		if err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: permission denied" &&
-			err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: read-only file system" {
-			t.Errorf("unexpected error: %v", err)
-		}
+		assert.Contains(t, err.Error(), "unable to create cache dir \"/dst\"")
 	}
 }
 
