@@ -122,10 +122,9 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 	testFolder := t.TempDir()
 	defer os.RemoveAll(testFolder)
 
-	// Create a new tar archive file
+	// Create a new tar archive file with cache content
 	archiveFileName := fmt.Sprintf(archiveFileNameFormat, archiveFilePrefix, 1)
 	archivePath := filepath.Join(testFolder, archiveFileName)
-	// to be closed by BuildArchive
 	archiveFile, err := os.Create(archivePath)
 	if err != nil {
 		t.Fatalf("should not fail")
@@ -134,18 +133,33 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 	err = prepareFakeTar(archiveFile)
 	assert.NoError(t, err, "should not fail")
 
-	o, err := NewArchiveExtractor(testFolder, filepath.Join(testFolder, "dst"), filepath.Join("/", "dst"))
+	// Create a read-only directory to use as cache dir parent
+	// This ensures the test will fail consistently across different systems
+	readOnlyDir := filepath.Join(testFolder, "readonly")
+	err = os.Mkdir(readOnlyDir, 0755)
+	assert.NoError(t, err, "should create readonly dir")
+
+	// Make it read-only (remove write permissions)
+	err = os.Chmod(readOnlyDir, 0555)
+	assert.NoError(t, err, "should make dir read-only")
+	defer os.Chmod(readOnlyDir, 0755) // restore permissions for cleanup
+
+	// Try to create cache dir inside read-only directory
+	cacheDir := filepath.Join(readOnlyDir, "cache")
+
+	o, err := NewArchiveExtractor(testFolder, filepath.Join(testFolder, "dst"), cacheDir)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	err = o.Unarchive()
-	// Test expects an error when trying to create cache directory at root level (/dst)
-	// The working directory creation succeeds (it's in testFolder), but cache dir creation
-	// should fail with permission denied or read-only file system error
+	t.Logf("Unarchive error: %v", err)
+
+	// Test expects an error when trying to create cache directory inside read-only parent
+	// This should fail consistently across all systems
 	assert.Error(t, err, "expected an error but got nil")
 	if err != nil {
-		// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
-		assert.Contains(t, err.Error(), "unable to create cache dir \"/dst\"")
+		assert.Contains(t, err.Error(), "unable to create cache dir")
 	}
 }
 
