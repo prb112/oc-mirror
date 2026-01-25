@@ -93,7 +93,7 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 		t.Fatalf("should not fail")
 	}
 
-	err = prepareDummyTar(archiveFile)
+	err = prepareDummyTarWorkingDir(archiveFile)
 	assert.NoError(t, err, "should not fail")
 
 	o, err := NewArchiveExtractor(testFolder, filepath.Join("/", "dst"), filepath.Join(testFolder, "dst"))
@@ -101,7 +101,11 @@ func TestUnArchiver_WorkingDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	assert.Equal(t, "unable to create working dir \"/dst\": mkdir /dst: permission denied", err.Error())
+	// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
+	if err.Error() != "unable to create working dir \"/dst\": mkdir /dst: permission denied" &&
+		err.Error() != "unable to create working dir \"/dst\": mkdir /dst: read-only file system" {
+		t.Errorf("unexpected error: %v", err)
+	}
 }
 
 func TestUnArchiver_CacheDirError(t *testing.T) {
@@ -125,7 +129,11 @@ func TestUnArchiver_CacheDirError(t *testing.T) {
 		t.Fatal(err)
 	}
 	err = o.Unarchive()
-	assert.Equal(t, "unable to create cache dir \"/dst\": mkdir /dst: permission denied", err.Error())
+	// Error message varies by OS: "permission denied" on Linux, "read-only file system" on macOS
+	if err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: permission denied" &&
+		err.Error() != "unable to create cache dir \"/dst\": mkdir /dst: read-only file system" {
+		t.Errorf("unexpected error: %v", err)
+	}
 }
 
 func prepareFakeTarWorkingDir(tarFile *os.File) error {
@@ -252,6 +260,34 @@ func prepareDummyTar(tarFile *os.File) error {
 	content := []byte("dummy test content")
 	header := &tar.Header{
 		Name: "test.txt",
+		Mode: 0644,
+		Size: int64(len(content)),
+	}
+
+	// Write the header
+	if err := tarWriter.WriteHeader(header); err != nil {
+		return fmt.Errorf("error writing tar header: %w", err)
+	}
+
+	// Write the content
+	if _, err := tarWriter.Write(content); err != nil {
+		return fmt.Errorf("error writing tar content: %w", err)
+	}
+
+	return nil
+}
+
+// prepareDummyTarWorkingDir creates a tar archive with working-dir content.
+// This is similar to prepareFakeTar but creates dummy content inline without
+// depending on external test fixtures.
+func prepareDummyTarWorkingDir(tarFile *os.File) error {
+	tarWriter := tar.NewWriter(tarFile)
+	defer tarWriter.Close()
+
+	// Create a dummy file in the working-dir structure
+	content := []byte("dummy working-dir content")
+	header := &tar.Header{
+		Name: "working-dir/test-file.txt",
 		Mode: 0644,
 		Size: int64(len(content)),
 	}
